@@ -6,4 +6,8 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface MonnaieRepository extends JpaRepository<Monnaie, Integer> {
+
+    Monnaie getByCode(String code);
+
+    Monnaie getByLibelle(String libelle);
 }

@@ -1,14 +1,12 @@
 package com.sitanInfo.API_WS_PARAMETRES.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.*;
 import lombok.Data;
 
 import java.util.Date;
 
 @Entity
+@Table( schema = "parametres")
 @Data
 public class Diplome extends AbstractEntity{
 

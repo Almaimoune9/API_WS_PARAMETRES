@@ -1,15 +1,14 @@
 package com.sitanInfo.API_WS_PARAMETRES.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.*;
 import lombok.Data;
 
 @Entity
+@Table( schema = "parametres")
 @Data
-public class Etablissement extends AbstractEntity{
+public class Etablissement extends AbstractEntity implements ExcelExportable{
 
+    private int id;
     private String code;
     private String nom;
     private String abreviation;
@@ -26,4 +25,14 @@ public class Etablissement extends AbstractEntity{
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "pays")
     private Pays pays;
+
+    @Override
+    public String [] getHeaders() {
+        return new String[] {"ID", "Code", "Nom"};
+    }
+
+    @Override
+    public Object[] getData() {
+        return new Object[] {id, code, nom};
+    }
 }

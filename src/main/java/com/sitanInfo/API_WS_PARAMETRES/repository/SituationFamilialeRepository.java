@@ -6,4 +6,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface SituationFamilialeRepository extends JpaRepository<SituationFamiliale, Integer> {
+
+    SituationFamiliale getByCode(String code);
 }

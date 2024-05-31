@@ -4,6 +4,7 @@ import com.sitanInfo.API_WS_PARAMETRES.model.CodeHoraire;
 import com.sitanInfo.API_WS_PARAMETRES.repository.CodeHoraireRepository;
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -16,9 +17,9 @@ public class CodeHoraireService {
     @Autowired
     private CodeHoraireRepository codeHoraireRepository;
 
-    public String creer(CodeHoraire codeHoraire){
-        codeHoraireRepository.save(codeHoraire);
-        return "Code horaire créer";
+    public ResponseEntity<CodeHoraire> create(CodeHoraire codeHoraire){
+         codeHoraireRepository.save(codeHoraire);
+         return ResponseEntity.ok(codeHoraire);
     }
 
     public List<CodeHoraire> lire() {
@@ -29,28 +30,11 @@ public class CodeHoraireService {
         return codeHoraireRepository.findById(id);
     }
 
-    public String supprimer(Integer id) {
+    public void delete(Integer id) {
         codeHoraireRepository.deleteById(id);
-        return "Code horaire non trouvée";
     }
 
-    public String modifier(Integer id, CodeHoraire codeHoraire) {
-        try {
-            CodeHoraire codeHoraireModifier = codeHoraireRepository.findById(id).orElse(null);
-            if (codeHoraireModifier == null){
-                return "Code horaire non trouvé";
-            }
-            //Mettre à jour les données
-            codeHoraireModifier.setCode(codeHoraire.getCode());
-            codeHoraireModifier.setSeuil(codeHoraire.getSeuil());
-            codeHoraireModifier.setLibelle(codeHoraire.getLibelle());
-
-            //Enregistrer les modifications
-            codeHoraireRepository.save(codeHoraireModifier);
-            return "Code horaire modifier";
-        } catch (Exception e){
-            e.printStackTrace();
-            return "Une erreur s'est produite";
-        }
+    public CodeHoraire updateCodeHoraire(CodeHoraire codeHoraire){
+        return codeHoraireRepository.save(codeHoraire);
     }
 }

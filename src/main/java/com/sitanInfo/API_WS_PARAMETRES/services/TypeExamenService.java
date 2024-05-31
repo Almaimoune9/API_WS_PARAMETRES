@@ -1,15 +1,19 @@
 package com.sitanInfo.API_WS_PARAMETRES.services;
 
+import com.sitanInfo.API_WS_PARAMETRES.model.StatutEtudiant;
 import com.sitanInfo.API_WS_PARAMETRES.model.TypeExamen;
-import com.sitanInfo.API_WS_PARAMETRES.model.TypeFormation;
 import com.sitanInfo.API_WS_PARAMETRES.repository.TypeExamenRepository;
+import com.sitanInfo.API_WS_PARAMETRES.wrapper.ResponseWrapper;
 import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+@Slf4j
 @Service
 @Data
 public class TypeExamenService {
@@ -17,57 +21,44 @@ public class TypeExamenService {
     @Autowired
     private TypeExamenRepository typeExamenRepository;
 
-    public String creer(TypeExamen typeExamen) {
+
+    public ResponseWrapper<TypeExamen> create(TypeExamen typeExamen) {
         try {
-            TypeExamen typeExiste = typeExamenRepository.getByCode(typeExamen.getCode());
-            if (typeExiste != null){
-                return "Ce Type examen existe deja";
+            TypeExamen typeExamenExiste = typeExamenRepository.getByCode(typeExamen.getCode());
+            if (typeExamenExiste != null) {
+                return ResponseWrapper.ko("Ce type existe deja");
             } else {
-                typeExamenRepository.save(typeExamen);
-                return "Type examen créer";
+                //Le code du type en majuscule
+                typeExamen.setCode(typeExamen.getCode().toUpperCase());
+
+                typeExamen = typeExamenRepository.saveAndFlush(typeExamen);
+                return ResponseWrapper.ok(typeExamen);
             }
-        }catch (Exception e){
-            e.printStackTrace();
-            return "Une erreur est survenue";
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+            return ResponseWrapper.ko("Une erreur est survenue lors de la création du type");
         }
     }
 
-
-    public List<TypeExamen> lire() {
-        return typeExamenRepository.findAll();
+    public List<TypeExamen> findAll(){
+        try {
+            return typeExamenRepository.findAll();
+        } catch (Exception e){
+            log.error(e.getMessage(), e);
+            return Collections.emptyList();
+        }
     }
+
 
     public Optional<TypeExamen> findById(Integer id) {
         return typeExamenRepository.findById(id);
     }
 
-    public String modifier(Integer id, TypeExamen typeExamen) {
-        try {
-            //Recherche le type par son id
-            TypeExamen typeExamenModifier = typeExamenRepository.findById(id).orElse(null);
-
-            if (typeExamenModifier == null) {
-                return "Type non trouvé";
-            }
-            //Mettre à jour les informations du type
-            typeExamenModifier.setCode(typeExamen.getCode());
-            typeExamenModifier.setLibelle( typeExamen.getLibelle());
-
-
-            //Enregistrer les modifications
-            typeExamenRepository.save(typeExamenModifier);
-
-            return "Type modifier avec succés";
-        } catch (Exception e) {
-            e.printStackTrace();
-            return "Une erreur est survenue lors de la modification du type Examen.";
-        }
+    public TypeExamen updateTypeExamen(TypeExamen typeExamen){
+        return typeExamenRepository.save(typeExamen);
     }
 
-    public String supprimer(Integer id) {
-        if (typeExamenRepository.existsById(id)){
-            typeExamenRepository.deleteById(id);
-            return "Type Examen supprimer";
-        } else return "Ce type examen n'existe pas";
+    public void delete(Integer id) {
+        typeExamenRepository.deleteById(id);
     }
 }

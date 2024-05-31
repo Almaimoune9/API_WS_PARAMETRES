@@ -7,4 +7,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface AnneeAcademiqueRepository extends JpaRepository<AnneeAcademique, Integer> {
 
+    AnneeAcademique getAnneeAcademiqueById(Integer id);
+
 }

@@ -1,15 +1,19 @@
 package com.sitanInfo.API_WS_PARAMETRES.services;
 
-import com.sitanInfo.API_WS_PARAMETRES.model.Roles;
+import com.sitanInfo.API_WS_PARAMETRES.model.TypeFormation;
 import com.sitanInfo.API_WS_PARAMETRES.model.TypeSalle;
 import com.sitanInfo.API_WS_PARAMETRES.repository.TypeSalleRepository;
+import com.sitanInfo.API_WS_PARAMETRES.wrapper.ResponseWrapper;
 import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+@Slf4j
 @Service
 @Data
 public class TypeSalleService {
@@ -17,58 +21,61 @@ public class TypeSalleService {
     @Autowired
     private TypeSalleRepository typeSalleRepository;
 
-    public String creer(TypeSalle typeSalle) {
+//    public String creer(TypeSalle typeSalle) {
+//        try {
+//            TypeSalle typeExiste = typeSalleRepository.getByLib(typeSalle.getCode());
+//            if (typeExiste != null){
+//                return "Ce Type existe deja";
+//            } else {
+//                typeSalleRepository.save(typeSalle);
+//                return "Type créer";
+//            }
+//        }catch (Exception e){
+//            e.printStackTrace();
+//            return "Une erreur est survenue";
+//        }
+//    }
+
+
+    public ResponseWrapper<TypeSalle> create(TypeSalle typeSalle) {
         try {
-            TypeSalle typeExiste = typeSalleRepository.getByLib(typeSalle.getCode());
-            if (typeExiste != null){
-                return "Ce Type existe deja";
+            TypeSalle typeSalleExiste = typeSalleRepository.getByLibelle(typeSalle.getLibelle());
+            if (typeSalleExiste != null) {
+                return ResponseWrapper.ko("Ce TypeSalle existe deja");
             } else {
-                typeSalleRepository.save(typeSalle);
-                return "Type créer";
+                //Le libelle du type en majuscule
+                typeSalle.setLibelle(typeSalle.getLibelle().toUpperCase());
+
+                typeSalle = typeSalleRepository.saveAndFlush(typeSalle);
+                return ResponseWrapper.ok(typeSalle);
             }
-        }catch (Exception e){
-            e.printStackTrace();
-            return "Une erreur est survenue";
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+            return ResponseWrapper.ko("Une erreur est survenue lors de la création du type salle");
         }
     }
 
-
-    public List<TypeSalle> lire() {
-        return typeSalleRepository.findAll();
+    public List<TypeSalle> findAll(){
+        try {
+            return typeSalleRepository.findAll();
+        } catch (Exception e){
+            log.error(e.getMessage(), e);
+            return Collections.emptyList();
+        }
     }
+//    public List<TypeSalle> lire() {
+//        return typeSalleRepository.findAll();
+//    }
 
     public Optional<TypeSalle> findById(Integer id) {
         return typeSalleRepository.findById(id);
     }
 
-    public String modifier(Integer id, TypeSalle typeSalle) {
-        try {
-            //Recherche le role par son id
-            TypeSalle typeSalleModifier = typeSalleRepository.findById(id).orElse(null);
-
-            if (typeSalleModifier == null) {
-                return "Type non trouvé";
-            }
-            //Mettre à jour les informations du type
-            typeSalleModifier.setCode(typeSalle.getCode());
-            typeSalleModifier.setDescription(typeSalle.getDescription());
-            typeSalleModifier.setLib(typeSalle.getLib());
-
-
-            //Enregistrer les modifications
-            typeSalleRepository.save(typeSalleModifier);
-
-            return "Type modifier avec succés";
-        } catch (Exception e) {
-            e.printStackTrace();
-            return "Une erreur est survenue lors de la modification du type.";
-        }
+    public TypeSalle updateTypeDSalle(TypeSalle typeSalle){
+        return typeSalleRepository.save(typeSalle);
     }
 
-    public String supprimer(Integer id) {
-        if (typeSalleRepository.existsById(id)){
-            typeSalleRepository.deleteById(id);
-            return "Type supprimer";
-        } else return "Ce type n'existe pas";
+    public void delete(Integer id){
+        typeSalleRepository.deleteById(id);
     }
 }

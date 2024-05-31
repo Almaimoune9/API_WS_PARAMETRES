@@ -7,5 +7,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface TypeSalleRepository extends JpaRepository<TypeSalle, Integer> {
 
-    TypeSalle getByLib(String lib);
+    TypeSalle getByLibelle(String libelle);
 }

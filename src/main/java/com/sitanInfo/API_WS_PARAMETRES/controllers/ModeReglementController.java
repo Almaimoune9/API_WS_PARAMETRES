@@ -2,6 +2,7 @@ package com.sitanInfo.API_WS_PARAMETRES.controllers;
 
 import com.sitanInfo.API_WS_PARAMETRES.model.ModeReglement;
 import com.sitanInfo.API_WS_PARAMETRES.services.ModeReglementService;
+import com.sitanInfo.API_WS_PARAMETRES.wrapper.ResponseWrapper;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -18,14 +19,14 @@ public class ModeReglementController {
 
     @Operation(summary = "Créer un mode de reglement")
     @PostMapping("/modeReglement")
-    public String create(@RequestBody ModeReglement modeReglement){
-        return modeReglementService.creer(modeReglement);
+    public ResponseWrapper<ModeReglement> create(@RequestBody ModeReglement modeReglement){
+        return modeReglementService.create(modeReglement);
     }
 
     @Operation(summary = "Afficher la liste des modeReglement")
     @GetMapping("/modeReglement")
     public List<ModeReglement> read(){
-        return modeReglementService.lire();
+        return modeReglementService.findAll();
     }
 
     @Operation(summary = "Afficher un modeReglement")

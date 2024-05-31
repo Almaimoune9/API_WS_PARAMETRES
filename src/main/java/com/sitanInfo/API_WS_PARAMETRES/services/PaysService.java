@@ -1,15 +1,19 @@
 package com.sitanInfo.API_WS_PARAMETRES.services;
 
-import com.sitanInfo.API_WS_PARAMETRES.model.Parametres;
+import com.sitanInfo.API_WS_PARAMETRES.model.Monnaie;
 import com.sitanInfo.API_WS_PARAMETRES.model.Pays;
+import com.sitanInfo.API_WS_PARAMETRES.repository.MonnaieRepository;
 import com.sitanInfo.API_WS_PARAMETRES.repository.PaysRepository;
+import com.sitanInfo.API_WS_PARAMETRES.wrapper.ResponseWrapper;
 import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
+@Slf4j
 @Service
 @Data
 public class PaysService {
@@ -17,57 +21,72 @@ public class PaysService {
     @Autowired
     private PaysRepository paysRepository;
 
-    public String creer(Pays pays) {
+    @Autowired
+    private MonnaieRepository monnaieRepository;
+
+    public ResponseWrapper<String> createPays(Pays pays) {
         try {
             Pays paysExiste = paysRepository.getByNom(pays.getNom());
-            if (paysExiste != null){
-                return "Cet pays existe deja";
+
+            if (paysExiste != null) {
+                return ResponseWrapper.ko("Ce pays existe déjà.");
             } else {
                 paysRepository.save(pays);
-                return "Pays créer";
+                return ResponseWrapper.ok("Pays créer avec succes");
             }
-        } catch (Exception e){
-            e.printStackTrace();
-            return "Une erreur est survenue lors de la création du pays";
+        }catch (Exception e) {
+            log.error(e.getMessage(), e);
+            return ResponseWrapper.ko("Une erreur est survenue lors de la création du pays.");
         }
     }
 
-    public List<Pays> Lire(){
+
+    public List<Pays> read(){
         return paysRepository.findAll();
     }
 
-    public Optional<Pays> optionalParametres(Integer id){
+    public Optional<Pays> optionalPays(Integer id){
         return paysRepository.findById(id);
     }
 
-    public String supprimer(Integer id){
-        if (paysRepository.existsById(id)){
-            paysRepository.deleteById(id);
-            return "Pays supprimé";
-        } else {
-            return "Ce pays n'existe pas";
+    public void deletePays(Integer id){
+        paysRepository.deleteById(id);
+    }
+
+    public Pays updatePays(Pays pays){
+        return paysRepository.save(pays);
+    }
+
+
+    //Partie Monnaie
+    public ResponseWrapper<String> createMonnaie(Monnaie monnaie) {
+        try {
+            Monnaie monnaieExiste = monnaieRepository.getByCode(monnaie.getCode());
+
+            if (monnaieExiste != null) {
+                return ResponseWrapper.ko("Cette monnaie existe déjà.");
+            } else {
+                monnaieRepository.save(monnaie);
+                return ResponseWrapper.ok("Monnaie créé avec succès.");
+            }
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+            return ResponseWrapper.ko("Une erreur est survenue lors de la création de la monnaie.");
         }
     }
 
-    public String modifier(Integer id, Pays pays) {
-        try {
-            Pays paysModifier = paysRepository.findById(id).orElse(null);
-            if (paysModifier == null){
-                return "Pays non trouvé";
-            }
-            //Mettre à jour les données
-            paysModifier.setCode(pays.getCode());
-            paysModifier.setNom(pays.getNom());
-            paysModifier.setDevise(pays.getDevise());
+    public List<Monnaie> findAll(){
+        return monnaieRepository.findAll();
+    }
 
+    public Optional<Monnaie> optionalMonnaie(Integer id){
+        return monnaieRepository.findById(id);
+    }
 
-            //Enregistrer les modifications
-            paysRepository.save(paysModifier);
-            return "Données modifiées";
-
-        } catch (Exception e){
-            e.printStackTrace();
-            return "Une erreur s'est produite";
-        }
+    public Monnaie updateMonnaie(Monnaie monnaie){
+       return monnaieRepository.save(monnaie);
+    }
+    public void delete(Integer id){
+         monnaieRepository.deleteById(id);
     }
 }

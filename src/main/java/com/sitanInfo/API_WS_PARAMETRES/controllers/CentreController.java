@@ -1,8 +1,8 @@
 package com.sitanInfo.API_WS_PARAMETRES.controllers;
 
 import com.sitanInfo.API_WS_PARAMETRES.model.Centres;
-import com.sitanInfo.API_WS_PARAMETRES.model.Etablissement;
 import com.sitanInfo.API_WS_PARAMETRES.services.CentresService;
+import com.sitanInfo.API_WS_PARAMETRES.wrapper.ResponseWrapper;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -19,14 +19,14 @@ public class CentreController {
 
     @Operation(summary = "Créer un centre")
     @PostMapping("/centres")
-    public String creer(@RequestBody Centres centres){
-        return centresService.creer(centres);
+    public ResponseWrapper<Centres> creer(@RequestBody Centres centres){
+        return centresService.create(centres);
     }
 
     @Operation(summary = "Afficher la liste des centres")
     @GetMapping("/centres")
     public List<Centres> read(){
-        return centresService.lire();
+        return centresService.findAll();
     }
 
     @Operation(summary = "Modifier un centre")

@@ -1,8 +1,8 @@
 package com.sitanInfo.API_WS_PARAMETRES.controllers;
 
-import com.sitanInfo.API_WS_PARAMETRES.model.Etablissement;
 import com.sitanInfo.API_WS_PARAMETRES.model.Parametres;
 import com.sitanInfo.API_WS_PARAMETRES.services.ParametresService;
+import com.sitanInfo.API_WS_PARAMETRES.wrapper.ResponseWrapper;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -19,14 +19,14 @@ public class ParametresController {
 
     @Operation(summary = "Ajouter un parametre")
     @PostMapping("/parametres")
-    public String creer(@RequestBody Parametres parametres){
-        return parametresService.creer(parametres);
+    public ResponseWrapper<Parametres> creer(@RequestBody Parametres parametres){
+        return parametresService.create(parametres);
     }
 
     @Operation(summary = "Afficher la liste des parametres")
     @GetMapping("/parametres")
     public List<Parametres> read(){
-        return parametresService.Lire();
+        return parametresService.findAll();
     }
 
     @Operation(summary = "Modifier un parametres")

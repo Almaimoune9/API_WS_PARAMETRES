@@ -7,4 +7,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface DepartementRepository extends JpaRepository<Departement, Integer> {
     Departement getByNom(String nom);
+
+    Departement getById(Integer id);
 }
